@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("PG_URL")
+}
+
+model TriRootVerb {
+  id              Int                           @id @default(autoincrement())
+  verbUnvocalized String                        @unique
+  verbRoot        String?
+  fa              String?
+  ain             String?
+  lam             String?
+  ainIllat        String?
+  lamIllat        String?
+  verbVocalized   TsulatsiMujardVocalizedVerb[]
+  patterns        TriRootVerbPattern[]
+  almaanySearches AlmaanySearch[]
+  TsulatsiMazid1  TsulatsiMazid1Verb[]
+}
+
+model TriRootVerbPattern {
+  id      Int           @id @default(autoincrement())
+  pattern String        @unique
+  verbs   TriRootVerb[]
+}
+
+model AlmaanySearch {
+  id                     Int                          @id @default(autoincrement())
+  TriRootVerb            TriRootVerb?                 @relation(fields: [triRootVerbId], references: [id], onDelete: Cascade)
+  triRootVerbId          Int?
+  matchedResult          String
+  matchedResultHTML      String
+  triRootVocalizedVerbId Int?
+  TriRootVocalizedVerb   TsulatsiMujardVocalizedVerb? @relation(fields: [triRootVocalizedVerbId], references: [id])
+  tsulatsiMazid1Id       Int?
+  TsulatsiMazid1         TsulatsiMazid1Verb?          @relation(fields: [tsulatsiMazid1Id], references: [id])
+  searchDetails          AlmaanySearchDetail[]
+  FirdleFiil             FirdleFiil?
+}
+
+model AlmaanySearchDetail {
+  id              Int           @id @default(autoincrement())
+  almaanySearchId Int
+  AlmaanySearch   AlmaanySearch @relation(fields: [almaanySearchId], references: [id], onDelete: Cascade)
+  detail          String
+}
+
+model TsulatsiMujardVocalizedVerb {
+  id              Int             @id @default(autoincrement())
+  verb            String          @unique
+  TriRootVerb     TriRootVerb?    @relation(fields: [triRootVerbId], references: [id])
+  triRootVerbId   Int?
+  Wazan           Wazan?          @relation(fields: [wazanId], references: [id])
+  wazanId         Int?
+  almaanySearches AlmaanySearch[]
+}
+
+model TsulatsiMazid1Verb {
+  id              Int             @id @default(autoincrement())
+  verb            String          @unique
+  triRootVerbId   Int?
+  TriRootVerb     TriRootVerb?    @relation(fields: [triRootVerbId], references: [id])
+  wazanId         Int?
+  wazan           Wazan?          @relation(fields: [wazanId], references: [id])
+  FirdleFiil      FirdleFiil?
+  almaanySearches AlmaanySearch[]
+}
+
+model Wazan {
+  id             Int                           @id @default(autoincrement())
+  wazan          String                        @unique
+  TsulatsiMazid1 TsulatsiMazid1Verb[]
+  TsulatsiMujard TsulatsiMujardVocalizedVerb[]
+}
+
+model FirdleFiil {
+  id                   Int                @id @default(autoincrement())
+  tsulatsiMazid1VerbId Int                @unique
+  TsulatsiMazid1Verb   TsulatsiMazid1Verb @relation(fields: [tsulatsiMazid1VerbId], references: [id])
+  almaanySearchId      Int                @unique
+  AlmaanySearch        AlmaanySearch      @relation(fields: [almaanySearchId], references: [id])
+}
