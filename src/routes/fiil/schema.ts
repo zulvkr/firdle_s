@@ -1,16 +1,3 @@
-export const countSchema = {
-  $id: 'Count',
-  type: 'object',
-  properties: {
-    count: {
-      type: 'number'
-    },
-    value: {
-      type: 'string'
-    }
-  }
-}
-
 export const schema = {
   tags: ['Fiil'],
   querystring: {

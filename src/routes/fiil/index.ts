@@ -1,10 +1,8 @@
 import { FastifyPluginAsync } from 'fastify'
 import { JsonSchemaToTsProvider } from '@fastify/type-provider-json-schema-to-ts'
-import { countSchema, schema } from './schema'
+import { schema } from './schema'
 
 const example: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
-  fastify.addSchema(countSchema)
-
   fastify
     .withTypeProvider<JsonSchemaToTsProvider>()
     .get('/', { schema }, async function (request, reply) {
