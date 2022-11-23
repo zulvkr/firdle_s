@@ -1,14 +1,88 @@
 import { FastifyPluginAsync } from 'fastify'
 import { JsonSchemaToTsProvider } from '@fastify/type-provider-json-schema-to-ts'
-import { schema } from './schema'
+import { fullCountFiilSchema, fullFiilSchema } from './schema'
+import { AlmaanySearchSchema, Count, Status } from '../../plugins/schemas'
+import { prisma } from '../../services/prisma'
 
-const example: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
+const fiilRouter: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
   fastify
     .withTypeProvider<JsonSchemaToTsProvider>()
-    .get('/', { schema }, async function (request, reply) {
-      request.query.value
-      return { count: 0 }
-    })
+    .get(
+      '/count',
+      { schema: fullCountFiilSchema },
+      async function (
+        request,
+        reply
+      ): Promise<{
+        status: Status
+        data: Count
+      }> {
+        const fiil = request.query.value
+
+        const countResult = await prisma.firdleFiil.count({
+          where: {
+            TsulatsiMazid1Verb: {
+              verb: fiil
+            }
+          }
+        })
+
+        return {
+          status: {
+            code: 200
+          },
+          data: {
+            count: countResult,
+            value: fiil
+          }
+        }
+      }
+    )
+
+  fastify
+    .withTypeProvider<JsonSchemaToTsProvider>()
+    .get(
+      '/',
+      { schema: fullFiilSchema },
+      async function (
+        request,
+        reply
+      ): Promise<{
+        status: Status
+        data: AlmaanySearchSchema
+      }> {
+        const fiil = request.query.value
+
+        const almaanySearchResult = await prisma.firdleFiil.findFirst({
+          where: {
+            TsulatsiMazid1Verb: {
+              verb: fiil
+            }
+          },
+          include: {
+            AlmaanySearch: {
+              include: {
+                searchDetails: true
+              }
+            }
+          }
+        })
+
+        return {
+          status: {
+            code: 200
+          },
+          data: {
+            matchedResult: almaanySearchResult?.AlmaanySearch.matchedResult,
+            matchedResultHTML:
+              almaanySearchResult?.AlmaanySearch.matchedResultHTML,
+            resultDetails: almaanySearchResult?.AlmaanySearch.searchDetails.map(
+              val => val.detail
+            )
+          }
+        }
+      }
+    )
 }
 
-export default example
+export default fiilRouter

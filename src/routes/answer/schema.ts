@@ -1,5 +1,5 @@
-export const fullCountFiilSchema = {
-  tags: ['Fiil'],
+export const fullAnswerSchema = {
+  tags: ['Answer'],
   querystring: {
     type: 'object',
     properties: {
@@ -15,30 +15,21 @@ export const fullCountFiilSchema = {
       type: 'object',
       properties: {
         status: { $ref: 'Status#' },
-        data: { $ref: 'Count#' }
+        data: { $ref: 'Answer#' }
       }
     }
   }
 }
 
-export const fullFiilSchema = {
-  tags: ['Fiil'],
-  querystring: {
-    type: 'object',
-    properties: {
-      value: {
-        type: 'string',
-      }
-    },
-    required: ['value']
-  } as const,
+export const fullMetaAnswerSchema = {
+  tags: ['Answer'],
   response: {
     200: {
       description: 'Successful Response',
       type: 'object',
       properties: {
         status: { $ref: 'Status#' },
-        data: { $ref: 'AlmaanySearch#' }
+        data: { $ref: 'MetaAnswer#' }
       }
     }
   }

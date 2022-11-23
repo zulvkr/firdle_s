@@ -16,10 +16,10 @@ model TriRootVerb {
   lam             String?
   ainIllat        String?
   lamIllat        String?
-  verbVocalized   TsulatsiMujardVocalizedVerb[]
-  patterns        TriRootVerbPattern[]
   almaanySearches AlmaanySearch[]
   TsulatsiMazid1  TsulatsiMazid1Verb[]
+  verbVocalized   TsulatsiMujardVocalizedVerb[]
+  patterns        TriRootVerbPattern[]
 }
 
 model TriRootVerbPattern {
@@ -30,13 +30,13 @@ model TriRootVerbPattern {
 
 model AlmaanySearch {
   id                     Int                          @id @default(autoincrement())
-  TriRootVerb            TriRootVerb?                 @relation(fields: [triRootVerbId], references: [id], onDelete: Cascade)
   triRootVerbId          Int?
   matchedResult          String
   matchedResultHTML      String
   triRootVocalizedVerbId Int?
-  TriRootVocalizedVerb   TsulatsiMujardVocalizedVerb? @relation(fields: [triRootVocalizedVerbId], references: [id])
   tsulatsiMazid1Id       Int?
+  TriRootVerb            TriRootVerb?                 @relation(fields: [triRootVerbId], references: [id], onDelete: Cascade)
+  TriRootVocalizedVerb   TsulatsiMujardVocalizedVerb? @relation(fields: [triRootVocalizedVerbId], references: [id])
   TsulatsiMazid1         TsulatsiMazid1Verb?          @relation(fields: [tsulatsiMazid1Id], references: [id])
   searchDetails          AlmaanySearchDetail[]
   FirdleFiil             FirdleFiil?
@@ -45,17 +45,17 @@ model AlmaanySearch {
 model AlmaanySearchDetail {
   id              Int           @id @default(autoincrement())
   almaanySearchId Int
-  AlmaanySearch   AlmaanySearch @relation(fields: [almaanySearchId], references: [id], onDelete: Cascade)
   detail          String
+  AlmaanySearch   AlmaanySearch @relation(fields: [almaanySearchId], references: [id], onDelete: Cascade)
 }
 
 model TsulatsiMujardVocalizedVerb {
   id              Int             @id @default(autoincrement())
   verb            String          @unique
-  TriRootVerb     TriRootVerb?    @relation(fields: [triRootVerbId], references: [id])
   triRootVerbId   Int?
-  Wazan           Wazan?          @relation(fields: [wazanId], references: [id])
   wazanId         Int?
+  TriRootVerb     TriRootVerb?    @relation(fields: [triRootVerbId], references: [id])
+  Wazan           Wazan?          @relation(fields: [wazanId], references: [id])
   almaanySearches AlmaanySearch[]
 }
 
@@ -63,11 +63,11 @@ model TsulatsiMazid1Verb {
   id              Int             @id @default(autoincrement())
   verb            String          @unique
   triRootVerbId   Int?
-  TriRootVerb     TriRootVerb?    @relation(fields: [triRootVerbId], references: [id])
   wazanId         Int?
+  TriRootVerb     TriRootVerb?    @relation(fields: [triRootVerbId], references: [id])
   wazan           Wazan?          @relation(fields: [wazanId], references: [id])
-  FirdleFiil      FirdleFiil?
   almaanySearches AlmaanySearch[]
+  FirdleFiil      FirdleFiil?
 }
 
 model Wazan {
@@ -80,7 +80,8 @@ model Wazan {
 model FirdleFiil {
   id                   Int                @id @default(autoincrement())
   tsulatsiMazid1VerbId Int                @unique
-  TsulatsiMazid1Verb   TsulatsiMazid1Verb @relation(fields: [tsulatsiMazid1VerbId], references: [id])
   almaanySearchId      Int                @unique
+  answerId             Int?               @unique
   AlmaanySearch        AlmaanySearch      @relation(fields: [almaanySearchId], references: [id])
+  TsulatsiMazid1Verb   TsulatsiMazid1Verb @relation(fields: [tsulatsiMazid1VerbId], references: [id])
 }

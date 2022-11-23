@@ -28,7 +28,7 @@ export default fp<FastifyDynamicSwaggerOptions>(async (fastify, opts) => {
   fastify.register(swaggerUi, {
     routePrefix: 'docs',
     uiConfig: {
-      docExpansion: 'full',
+      // docExpansion: 'full',
       deepLinking: false,
     },
     logLevel: 'info'
