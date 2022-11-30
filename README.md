@@ -1,48 +1,5 @@
-# Fastify CLI
+# Hi 👋
 
-This project use [Fastify CLI](https://github.com/fastify/fastify-cli).
+If you are here, you might come from firdle game. This repo is still alpha version and not much is documented yet.
 
-To migrate away use following script:
-
-```js
-'use strict'
-
-// Read the .env file.
-require('dotenv').config()
-
-// Require the framework
-const Fastify = require('fastify')
-
-// Require library to exit fastify process, gracefully (if possible)
-const closeWithGrace = require('close-with-grace')
-
-// Instantiate Fastify with some config
-const app = Fastify({
-  logger: true
-})
-
-// Register your application as a normal plugin.
-const appService = require('./app.js')
-app.register(appService)
-
-// delay is the number of milliseconds for the graceful close to finish
-const closeListeners = closeWithGrace({ delay: process.env.FASTIFY_CLOSE_GRACE_DELAY || 500 }, async function ({ signal, err, manual }) {
-  if (err) {
-    app.log.error(err)
-  }
-  await app.close()
-})
-
-app.addHook('onClose', (instance, done) => {
-  closeListeners.uninstall()
-  done()
-})
-
-// Start listening.
-app.listen({ port: process.env.PORT || 3000 }, (err) => {
-  if (err) {
-    app.log.error(err)
-    process.exit(1)
-  }
-})
-```
+This repo host firdle backend, it's fastify server with Typescript + Prisma ORM. Feel free to contribute. You might start on issues already listed or create your own issue.
