@@ -1,9 +1,14 @@
 import { FastifyPluginAsync } from 'fastify'
 import { JsonSchemaToTsProvider } from '@fastify/type-provider-json-schema-to-ts'
-import { fullAnswerSchema, fullMetaAnswerSchema } from './schema'
 import {
-  AnswerSchema,
-  InfoAnswerSchema as MetaAnswerSchema,
+  fullMatchAnswerSchema,
+  fullMetaAnswerSchema,
+  fullAnswerAnswerSchema
+} from './schema'
+import {
+  MatchAnswerSchema,
+  MetaAnswerSchema,
+  AnswerAnswerSchema,
   Status
 } from '../../plugins/schemas'
 import { findAnswer, getAnswerId, matchAnswer } from '../../services/answer'
@@ -16,14 +21,14 @@ const answerRouter: FastifyPluginAsync = async (
   fastify
     .withTypeProvider<JsonSchemaToTsProvider>()
     .get(
-      '/',
-      { schema: fullAnswerSchema },
+      '/match',
+      { schema: fullMatchAnswerSchema },
       async function (
         request,
         reply
       ): Promise<{
         status: Status
-        data: AnswerSchema
+        data: MatchAnswerSchema
       }> {
         const userAnswer = request.query.value
         const systemAnswer = await findAnswer()
@@ -40,14 +45,14 @@ const answerRouter: FastifyPluginAsync = async (
           }
         }
 
-        const answer = matchAnswer(userAnswer, systemAnswer)
+        const answerMatch = matchAnswer(userAnswer, systemAnswer)
 
         return {
           status: {
             code
           },
           data: {
-            answer
+            answerMatch
           }
         }
       }
@@ -72,6 +77,45 @@ const answerRouter: FastifyPluginAsync = async (
           data: {
             answerId: getAnswerId(),
             expTime: dayjs.utc().endOf('day').toJSON()
+          }
+        }
+      }
+    )
+
+  fastify
+    .withTypeProvider<JsonSchemaToTsProvider>()
+    .get(
+      '/answer',
+      { schema: fullAnswerAnswerSchema },
+      async function (
+        request,
+        reply
+      ): Promise<{
+        status: Status
+        data: AnswerAnswerSchema
+      }> {
+        const systemAnswer = await findAnswer()
+
+        let code: Status['code'] = 200
+
+        if (!systemAnswer) {
+          code = 1000
+          return {
+            status: {
+              code
+            },
+            data: {}
+          }
+        }
+
+        const answer = systemAnswer
+
+        return {
+          status: {
+            code
+          },
+          data: {
+            answer
           }
         }
       }
