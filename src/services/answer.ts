@@ -1,4 +1,4 @@
-import { AnswerSchema } from '../plugins/schemas'
+import { MatchAnswerSchema } from '../plugins/schemas'
 import dayjs from '../utils/dayjs'
 import { normalizeKalimat } from './normalizeKalimat'
 import { prisma } from './prisma'
@@ -29,15 +29,17 @@ export function matchAnswer(answer1: string, answer2: string) {
   const answer1Arr = normalizeKalimat(answer1).split('')
   const answer2Arr = normalizeKalimat(answer2).split('')
 
-  const resultArr: AnswerSchema['answer'] = answer1Arr.map((uChar, i) => {
-    if (uChar === answer2Arr[i]) {
-      return 'matched'
+  const resultArr: MatchAnswerSchema['answerMatch'] = answer1Arr.map(
+    (uChar, i) => {
+      if (uChar === answer2Arr[i]) {
+        return 'matched'
+      }
+      if (answer2Arr.includes(uChar)) {
+        return 'misplaced'
+      }
+      return 'missed'
     }
-    if (answer2Arr.includes(uChar)) {
-      return 'misplaced'
-    }
-    return 'missed'
-  })
+  )
 
   return resultArr
 }

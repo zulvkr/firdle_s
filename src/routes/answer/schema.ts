@@ -1,10 +1,10 @@
-export const fullAnswerSchema = {
+export const fullMatchAnswerSchema = {
   tags: ['Answer'],
   querystring: {
     type: 'object',
     properties: {
       value: {
-        type: 'string',
+        type: 'string'
       }
     },
     required: ['value']
@@ -15,7 +15,21 @@ export const fullAnswerSchema = {
       type: 'object',
       properties: {
         status: { $ref: 'Status#' },
-        data: { $ref: 'Answer#' }
+        data: { $ref: 'MatchAnswer#' }
+      }
+    }
+  }
+}
+
+export const fullAnswerAnswerSchema = {
+  tags: ['Answer'],
+  response: {
+    200: {
+      description: 'Successful Response',
+      type: 'object',
+      properties: {
+        status: { $ref: 'Status#' },
+        data: { $ref: 'AnswerAnswer#' }
       }
     }
   }

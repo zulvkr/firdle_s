@@ -53,11 +53,11 @@ const almaanySearchSchema = {
 
 export type AlmaanySearchSchema = FromSchema<typeof almaanySearchSchema>
 
-const answerSchema = {
-  $id: 'Answer',
+const matchAnswerSchema = {
+  $id: 'MatchAnswer',
   type: 'object',
   properties: {
-    answer: {
+    answerMatch: {
       type: 'array',
       minitems: 4,
       maxitems: 4,
@@ -65,31 +65,44 @@ const answerSchema = {
         type: 'string',
         enum: ['matched', 'misplaced', 'missed']
       }
-    },
+    }
   }
 } as const
 
-export type AnswerSchema = FromSchema<typeof answerSchema>
+export type MatchAnswerSchema = FromSchema<typeof matchAnswerSchema>
+
+const answerAnswerSchema = {
+  $id: 'AnswerAnswer',
+  type: 'object',
+  properties: {
+    answer: {
+      type: 'string'
+    }
+  }
+} as const
+
+export type AnswerAnswerSchema = FromSchema<typeof answerAnswerSchema>
 
 const metaAnswerSchema = {
   $id: 'MetaAnswer',
   type: 'object',
   properties: {
     answerId: {
-      type: 'number',
+      type: 'number'
     },
     expTime: {
-      type: 'string',
+      type: 'string'
     }
   }
 } as const
 
-export type InfoAnswerSchema = FromSchema<typeof metaAnswerSchema>
+export type MetaAnswerSchema = FromSchema<typeof metaAnswerSchema>
 
 export default fp(async fastify => {
   fastify.addSchema(countSchema)
   fastify.addSchema(statusSchema)
   fastify.addSchema(almaanySearchSchema)
-  fastify.addSchema(answerSchema)
+  fastify.addSchema(matchAnswerSchema)
   fastify.addSchema(metaAnswerSchema)
+  fastify.addSchema(answerAnswerSchema)
 })
